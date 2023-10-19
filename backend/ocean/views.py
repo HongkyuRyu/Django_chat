@@ -5,6 +5,10 @@ import requests
 
 
 class ObservationView(APIView):
+    """
+    관측소 정보 가져오기 Front에서 Input을 입력하면, 해당 데이터를 가져온다.
+    """
+
     def get(self, request):
         obs_code = request.GET.get('ObsCode')
         date = request.GET.get('Date')
@@ -20,7 +24,7 @@ class ObservationView(APIView):
 
         try:
             # API 호출 및 데이터 가져오기
-            api_url = f'http://www.khoa.go.kr/api/oceangrid/DataType/search.do?ServiceKey={service_key}&ObsCode={obs_code}&Date={date}&ResultType=json'
+            api_url = f'http://www.khoa.go.kr/api/oceangrid/tidalHfRadar/search.do?ServiceKey={service_key}&ObsCode={obs_code}&Date={date}&ResultType=json'
             response = requests.get(api_url)
             response.raise_for_status()
             data = response.json()
