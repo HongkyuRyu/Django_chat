@@ -1,22 +1,49 @@
+{% load static %}
+
 <!DOCTYPE html>
-<html>
+<html lang="ko">
   <head>
-    <title>결과 페이지</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <title>결과</title>
   </head>
   <body>
-    <h1>결과 페이지</h1>
+    <nav>기름유출 모니터링</nav>
 
-    <!-- JSON 데이터를 표시 -->
-    <pre>관측시간: {{ current_time }}</pre>
-    <pre>관측장소: {{obs_post_name}}</pre>
-    <pre>풍향: {{ current_direct }}</pre>
-    <pre>풍속: {{ current_speed }}</pre>
+    <div id="content-wrapper">
+      <div id="predict">
+        <div class="jemok-predict">탐지결과</div>
+        <img src="data:image/jpeg;base64,{{ img }}" alt="Result Image" />
+      </div>
 
-    obs_lat = {{obs_lat}} obs_lon = {{obs_lon}}
+      <div id="ocean">
+        <div class="jemok-ocean">해상정보</div>
+        <ul>
+          <li>관측시간: {{current_time}}</li>
+          <li>관측장소: {{obs_post_name}}</li>
+          <li>풍향: {{current_direct}}deg</li>
+          <li>풍속: {{current_speed}}m/s</li>
+        </ul>
+      </div>
 
-    <div id="map" style="width: 500px; height: 400px"></div>
+      <div id="map">
+        <div class="jemok-map">해상정보</div>
+        <div id="map-img"></div>
+      </div>
+    </div>
 
-    <a href="{% url 'observation_form' %}">다시 입력하기</a>
+    <div class="blank"></div>
+    <div class="botton-wrapper">
+      <button
+        id="btnSubmit"
+        type="button"
+        onClick="location.href"
+        ="{% url 'observation_form' %}"
+      >
+        새로운 좌표 입력
+      </button>
+    </div>
 
     <script
       type="text/javascript"
@@ -26,7 +53,7 @@
       var obsLat = {{ obs_lat | safe }};
       var obsLon = {{ obs_lon | safe }};
 
-      var mapContainer = document.getElementById("map"), // 지도를 표시할 div
+      var mapContainer = document.getElementById("map-img"), // 지도를 표시할 div
         mapOption = {
           center: new kakao.maps.LatLng(obsLat, obsLon), // 지도의 중심좌표
           level: 10, // 지도의 확대 레벨

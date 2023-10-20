@@ -5,6 +5,7 @@ from .forms import ObservationForm
 from secret import *
 from django.shortcuts import render
 from .sorting import get_observation_code
+from .training import YoloV8
 
 
 class ObservationFormView(FormView):
@@ -24,6 +25,9 @@ class ObservationFormView(FormView):
         api_url = f'http://www.khoa.go.kr/api/oceangrid/tidalBu/search.do?ServiceKey={service_key}&ObsCode={obs_code}&Date={date}&ResultType=json'
         print(service_key)
         print(api_url)
+
+        image = YoloV8()
+
         try:
             response = requests.get(api_url)
             response.raise_for_status()
@@ -42,7 +46,7 @@ class ObservationFormView(FormView):
             print(current_direct)
             print(current_speed)
             return render(self.request, 'result.html', {'current_direct': current_direct, 'current_speed': current_speed, 'current_time': current_time,
-                                                        'obs_post_id': obs_post_id, 'obs_post_name': obs_post_name, 'obs_lat': obs_lat, 'obs_lon': obs_lon})
+                                                        'obs_post_id': obs_post_id, 'obs_post_name': obs_post_name, 'obs_lat': obs_lat, 'obs_lon': obs_lon, 'img': image})
 
         except requests.exceptions.RequestException as e:
             return JsonResponse({'error': 'API request failed'}, status=500)
