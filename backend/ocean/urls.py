@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import ObservationView
+from .views import ObservationFormView
 
 urlpatterns = [
-    path('api/observation', ObservationView.as_view(), name='observation-view')
+    path('observation/', ObservationFormView.as_view(), name='observation_form')
 ]

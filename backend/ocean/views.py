@@ -1,33 +1,35 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from secret import *
+from django.views.generic.edit import FormView
+from django.http import HttpResponse, JsonResponse
 import requests
+from .forms import ObservationForm
+from secret import *
+from django.shortcuts import render
 
 
-class ObservationView(APIView):
-    """
-    관측소 정보 가져오기 Front에서 Input을 입력하면, 해당 데이터를 가져온다.
-    """
+class ObservationFormView(FormView):
+    template_name = 'observation_form.html'
+    form_class = ObservationForm
 
-    def get(self, request):
-        obs_code = request.GET.get('ObsCode')
-        date = request.GET.get('Date')
-
-        # 유효성 검사
-        if not obs_code or not date:
-            return Response({'error': '관측소 정보와 날짜 정보가 필요합니다.'}, status=400)
-
+    def form_valid(self, form):
+        obs_code = form.cleaned_data['obsCode']
+        date = form.cleaned_data['date']
+        print(obs_code)
+        print(date)
+        # API호출 및 데이터 가져오기
         service_key = SOCIAL_INFO['OCEAN_SECRET_KEY']
-
-        if not service_key:
-            return Response({'error': 'Service key not found'}, status=500)
-
+        api_url = f'http://www.khoa.go.kr/api/oceangrid/tidalBu/search.do?ServiceKey={service_key}&ObsCode={obs_code}&Date={date}&ResultType=json'
+        print(service_key)
+        print(api_url)
         try:
-            # API 호출 및 데이터 가져오기
-            api_url = f'http://www.khoa.go.kr/api/oceangrid/tidalHfRadar/search.do?ServiceKey={service_key}&ObsCode={obs_code}&Date={date}&ResultType=json'
             response = requests.get(api_url)
             response.raise_for_status()
             data = response.json()
-            return Response(data)
+
+            current_direct = data['result']['data'][-1]['current_direct']
+            current_speed = data['result']['data'][-1]['current_speed']
+            print(current_direct)
+            print(current_speed)
+            return render(self.request, 'result.html', {'current_direct': current_direct, 'current_speed': current_speed})
+
         except requests.exceptions.RequestException as e:
-            return Response({'error': 'API request failed'}, status=500)
+            return JsonResponse({'error': 'API request failed'}, status=500)

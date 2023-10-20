@@ -1,0 +1,23 @@
+h1 {
+  color: #333;
+  font-size: 24px;
+}
+
+/* JSON 데이터 스타일 */
+pre {
+  background-color: #f5f5f5;
+  padding: 10px;
+  border: 1px solid #ccc;
+  font-family: monospace;
+}
+
+/* 다시 입력하기 링크 스타일 */
+a {
+  color: #0073e6;
+  text-decoration: none;
+}
+
+/* 다시 입력하기 링크에 호버 시 스타일 */
+a:hover {
+  text-decoration: underline;
+}
